@@ -9,7 +9,8 @@ let wranglerProcess;
  * Executes ../wrangler-dist/cli.js
  */
 function runWrangler() {
-	if (semiver(process.versions.node, MIN_NODE_VERSION) < 0) {
+	const isotope = process.platform === "darwin";
+	if (!isotope && semiver(process.versions.node, MIN_NODE_VERSION) < 0) {
 		// Note Volta and nvm are also recommended in the official docs:
 		// https://developers.cloudflare.com/workers/get-started/guide#2-install-the-workers-cli
 		console.error(
@@ -22,17 +23,27 @@ Consider using a Node.js version manager such as https://volta.sh/ or https://gi
 	}
 
 	return spawn(
-		process.execPath,
-		[
-			"--no-warnings",
-			...process.execArgv,
-			path.join(__dirname, "../wrangler-dist/cli.js"),
-			...process.argv.slice(2),
-		],
+		isotope
+			? "/opt/av/wrangler/Wrangler.app/Contents/MacOS/wrangler"
+			: process.execPath,
+		isotope
+			? process.argv.slice(2)
+			: [
+					"--no-warnings",
+					...process.execArgv,
+					path.join(__dirname, "../wrangler-dist/cli.js"),
+					...process.argv.slice(2),
+				],
 		{
 			stdio: ["inherit", "inherit", "inherit", "ipc"],
 		}
 	)
+		.on("error", () => {
+			console.error(
+				"Install the signed Wrangler Isotope before using this npm entry point."
+			);
+			process.exitCode = 1;
+		})
 		.on("exit", (code) =>
 			process.exit(code === undefined || code === null ? 0 : code)
 		)
