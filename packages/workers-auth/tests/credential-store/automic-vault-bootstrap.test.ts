@@ -50,7 +50,14 @@ it("authenticates the immutable bundle before loading code, preserving the comma
 				"node:fs": fs,
 				"node:path": path,
 				"node:module": module,
-				"node:child_process": { execFileSync: () => events.push("verify") },
+				"node:child_process": {
+					execFileSync: (_command: string, args: string[]) => {
+						expect(args[args.indexOf("--test-requirement") + 1]).toMatch(
+							/^=anchor apple generic/
+						);
+						events.push("verify");
+					},
+				},
 			})[name],
 	});
 	expect(events[0]).toBe("verify");

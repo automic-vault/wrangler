@@ -70,7 +70,7 @@ try {
 			"--strict",
 			"--all-architectures",
 			"--test-requirement",
-			'anchor apple generic and certificate leaf[subject.OU] = ZU76A67LGU and identifier "com.automicvault.wrangler"',
+			'=anchor apple generic and certificate leaf[subject.OU] = ZU76A67LGU and identifier "com.automicvault.wrangler"',
 			bundle,
 		],
 		{ stdio: "pipe" }
