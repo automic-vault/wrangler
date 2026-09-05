@@ -73,6 +73,7 @@ describe("Automic Vault OAuth storage", () => {
 		request.mockReturnValue(undefined);
 		expect(store.read()).toBeUndefined();
 		for (const value of [
+			"not-json-secret-material",
 			"null",
 			"[]",
 			'{"oauth_token":42}',
@@ -80,7 +81,9 @@ describe("Automic Vault OAuth storage", () => {
 			'{"unrecognized":"value"}',
 		]) {
 			request.mockReturnValue(value);
-			expect(() => store.read()).toThrow();
+			expect(() => store.read()).toThrow(
+				"Invalid Wrangler credential in Automic Vault."
+			);
 		}
 	});
 	it("refuses credential access from a normal Node or npm installation", ({

@@ -1,6 +1,6 @@
 ---
-"wrangler": minor
-"@cloudflare/workers-auth": minor
+"wrangler": major
+"@cloudflare/workers-auth": major
 ---
 
 Add the macOS Automic Vault Isotope credential store

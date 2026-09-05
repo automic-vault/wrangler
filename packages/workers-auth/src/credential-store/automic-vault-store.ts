@@ -53,7 +53,15 @@ export class AutomicVaultCredentialStore implements CredentialStore {
 		if (value === undefined) {
 			return undefined;
 		}
-		const parsed: unknown = JSON.parse(value);
+		let parsed: unknown;
+		try {
+			parsed = JSON.parse(value);
+		} catch {
+			// SyntaxError messages can contain fragments of the Credential.
+			throw new UserError("Invalid Wrangler credential in Automic Vault.", {
+				telemetryMessage: "automic vault credential invalid",
+			});
+		}
 		if (
 			typeof parsed !== "object" ||
 			parsed === null ||
