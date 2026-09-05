@@ -42,6 +42,7 @@ cpSync(
 );
 run("clang++", [
 	"-std=c++17",
+	"-mmacosx-version-min=14.0",
 	"-fblocks",
 	"-shared",
 	"-framework",
