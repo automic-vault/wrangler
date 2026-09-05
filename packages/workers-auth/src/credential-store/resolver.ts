@@ -2,6 +2,10 @@ import { existsSync, rmSync } from "node:fs";
 import { UserError } from "@cloudflare/workers-utils";
 import { getCloudflareAuthUseKeyringFromEnv } from "../env-vars";
 import {
+	AutomicVaultCredentialStore,
+	isIsotopeRuntime,
+} from "./automic-vault-store";
+import {
 	EncryptedFileCredentialStore,
 	getEncryptedAuthConfigFilePath,
 } from "./encrypted-file-store";
@@ -149,6 +153,13 @@ function resolveActiveCredentialStore(
 	config: ResolvedConfig,
 	profile?: string
 ): CredentialStore {
+	if (
+		process.platform === "darwin" &&
+		isIsotopeRuntime() &&
+		config.serviceName === "wrangler"
+	) {
+		return new AutomicVaultCredentialStore(config.getConfigPath(), profile);
+	}
 	const envOverride = getCloudflareAuthUseKeyringFromEnv();
 	const configPath = config.getConfigPath();
 
