@@ -79,16 +79,22 @@ function signNative(directory) {
 		if (entry.isDirectory()) signNative(file);
 		else {
 			const magic = readFileSync(file).subarray(0, 4).toString("hex");
-			if (["cffaedfe", "cefaedfe", "cafebabe", "bebafeca"].includes(magic))
+			if (["cffaedfe", "cefaedfe", "cafebabe", "bebafeca"].includes(magic)) {
 				run("/usr/bin/codesign", [
 					"--force",
 					"--options",
 					"runtime",
 					"--timestamp",
+					...(entry.name === "workerd"
+						? ["--entitlements", "isotope/entitlements.plist"]
+						: []),
 					"--sign",
 					identity,
 					file,
 				]);
+				if (entry.name === "workerd")
+					run(file, ["test", "isotope/workerd-smoke.capnp"]);
+			}
 		}
 	}
 }
