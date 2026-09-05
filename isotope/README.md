@@ -55,8 +55,12 @@ modified signatures, and resource links outside the bundle. The macOS npm
 `wrangler` and `wrangler2` entry points delegate to that exact runtime and never
 receive its credential through stdout or environment injection.
 
-This does not yet provide an `av harden wrangler` installer or automatic
-credential migration. Before switching, log out with each upstream auth
+Install with `brew install automic-vault/isotopes/wrangler-isotope`, then run
+`av harden wrangler` to verify and protect the runtime. Re-run the Hardener
+after Homebrew upgrades. Without Homebrew, the Hardener verifies and installs
+the same fork archive directly. No `.pkg` installer is used.
+
+Before switching, log out with each upstream auth
 profile to revoke and remove its credentials, then log in through the signed
 Isotope. Installing the Isotope alone does not resolve an existing Detector
 Finding. Library API consumers, Vite, Vitest and `cf-wrangler` do not inherit

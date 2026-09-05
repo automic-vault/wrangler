@@ -43,13 +43,18 @@ describe("Automic Vault OAuth storage", () => {
 		);
 		request.mockReturnValue(JSON.stringify(credential));
 		expect(store.read()).toEqual(credential);
-		store.clear();
+		expect(store.clear()).toBe(true);
 		expect(existsSync(path.join(directory, "config/work.toml"))).toBe(false);
 		expect(request).toHaveBeenLastCalledWith(
 			"wrangler-delete",
 			"WRANGLER_AUTH_776F726B"
 		);
 	});
+	it("reports no local credential marker on a no-op clear", ({ expect }) => {
+		const store = new AutomicVaultCredentialStore(directory);
+		expect(store.clear()).toBe(false);
+	});
+
 	it("does not turn denial or transport failure into logged-out state", ({
 		expect,
 	}) => {

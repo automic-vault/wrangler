@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { UserError } from "@cloudflare/workers-utils";
@@ -93,11 +93,13 @@ export class AutomicVaultCredentialStore implements CredentialStore {
 	}
 
 	clear(): boolean {
+		const marker = getAuthConfigFilePath(this.configPath, this.profile);
+		const existed = existsSync(marker);
 		client().request("wrangler-delete", this.key);
-		rmSync(getAuthConfigFilePath(this.configPath, this.profile), {
+		rmSync(marker, {
 			force: true,
 		});
-		return true;
+		return existed;
 	}
 
 	path(): string {
