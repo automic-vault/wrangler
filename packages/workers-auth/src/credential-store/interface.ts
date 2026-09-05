@@ -26,7 +26,7 @@ import type { AuthConfigStorage, UserAuthConfig } from "../config-file/auth";
  * `node:crypto` sync APIs, synchronous filesystem calls).
  */
 export interface CredentialStore extends AuthConfigStorage {
-	readonly kind: "file" | "encrypted-file";
+	readonly kind: "file" | "encrypted-file" | "automic-vault";
 
 	/**
 	 * Human-readable description of where credentials are stored, suitable
