@@ -11,6 +11,10 @@ import {
 	getEncryptedAuthConfigFilePath,
 	scrubEncryptedCredentials,
 } from "../credential-store";
+import {
+	AutomicVaultCredentialStore,
+	isIsotopeRuntime,
+} from "../credential-store/automic-vault-store";
 import { createProfileStore } from "../profiles";
 import { createFileStorage } from "./file-storage";
 import type { UserAuthConfig } from "../config-file/auth";
@@ -89,6 +93,13 @@ export function createCloudflareProfileStore(
 			return [...names];
 		},
 		delete(profile) {
+			if (
+				process.platform === "darwin" &&
+				isIsotopeRuntime() &&
+				keyringServiceName === "wrangler"
+			) {
+				new AutomicVaultCredentialStore(getConfigPath(), profile).clear();
+			}
 			// Clear the encrypted backend (`.enc` file + keyring entry) first.
 			// This is independent of the current keyring preference: the profile
 			// may have been encrypted in an earlier session even if keyring

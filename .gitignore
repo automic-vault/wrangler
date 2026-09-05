@@ -239,3 +239,6 @@ AGENTS.local.md
 .opencode/plans/
 .agents/skills
 .opencode/package-lock.json
+
+# Automic Vault Isotope build artifacts
+/isotope/out/
