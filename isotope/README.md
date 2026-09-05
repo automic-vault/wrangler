@@ -26,6 +26,8 @@ error. Explicit environment credentials remain outside Vault custody.
 
 ## Building
 
+The macOS arm64 Isotope requires macOS Sonoma (14) or later.
+
 Use pnpm 10.33.0 and the official Node 26.8.1 distribution for the SEA builder
 (Homebrew Node disables SEA). Install the pinned workspace dependencies with
 `pnpm install --frozen-lockfile`, then run:
