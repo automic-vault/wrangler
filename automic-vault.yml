@@ -1,0 +1,19 @@
+name:
+  isotope:wrangler
+
+replaces:
+  npm:wrangler
+
+build: |
+  pnpm install --frozen-lockfile
+  node isotope/build.mjs
+  cp isotope/out/cli-*.tgz out.tgz
+
+justification:
+  title:
+    Unprotected Credential Access
+  detail: |
+    This Isotope keeps Wrangler OAuth credentials in Automic Vault custody
+    and routes credential use through its authenticated XPC service.
+    The signed runtime and bundled dependencies replace project-local Node
+    as the Gate Client and Target. See isotope/README.md for requirements.
