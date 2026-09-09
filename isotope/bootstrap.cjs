@@ -41,7 +41,8 @@ try {
 				fs.accessSync(filename, fs.constants.W_OK);
 				writable = true;
 			} catch (error) {
-				if (error.code !== "EACCES" && error.code !== "EPERM") throw error;
+				// A read-only filesystem also denies writes (including macOS's root).
+				if (!["EACCES", "EPERM", "EROFS"].includes(error.code)) throw error;
 			}
 			if (writable)
 				throw new Error(
