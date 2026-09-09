@@ -9,8 +9,72 @@ import {
 } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { runInNewContext } from "node:vm";
 
 const root = path.resolve(import.meta.dirname, "..");
+const bootstrap = readFileSync(
+	path.join(root, "isotope/bootstrap.cjs"),
+	"utf8"
+);
+for (const [accessError, uid, mode, allowed] of [
+	["EACCES", 0, 0o755, true],
+	["EPERM", 0, 0o755, true],
+	["EROFS", 0, 0o755, true],
+	["EIO", 0, 0o755, false],
+	["ENOENT", 0, 0o755, false],
+	[null, 0, 0o755, false],
+	["EROFS", 501, 0o755, false],
+	["EROFS", 0, 0o777, false],
+]) {
+	let ran = false;
+	let error = "";
+	const modules = {
+		"node:path": path,
+		"node:fs": {
+			realpathSync: (filename) => filename,
+			lstatSync: () => ({
+				uid,
+				mode,
+				isSymbolicLink: () => false,
+				isDirectory: () => true,
+				isFile: () => false,
+			}),
+			readdirSync: () => [],
+			constants: { W_OK: 2 },
+			accessSync: () => {
+				if (accessError)
+					throw Object.assign(new Error(accessError), { code: accessError });
+			},
+		},
+		"node:child_process": { execFileSync: () => {} },
+		"node:module": {
+			createRequire: () => () => ({
+				runMain: () => {
+					ran = true;
+				},
+			}),
+		},
+	};
+	runInNewContext(bootstrap, {
+		require: (name) => modules[name],
+		process: {
+			execPath: "/opt/av/wrangler/Wrangler.app/Contents/MacOS/wrangler",
+			getuid: () => 501,
+			env: {},
+			argv: [],
+			stderr: {
+				write: (message) => {
+					error += message;
+				},
+			},
+		},
+	});
+	assert.equal(
+		ran,
+		allowed,
+		`${accessError}, uid=${uid}, mode=${mode}: ${error}`
+	);
+}
 const bundle = path.join(root, "isotope/out/Wrangler.app");
 const executable = path.join(bundle, "Contents/MacOS/wrangler");
 const directory = mkdtempSync(path.join(os.tmpdir(), "wrangler-sea-smoke-"));
