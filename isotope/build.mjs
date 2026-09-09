@@ -45,6 +45,7 @@ run("clang++", [
 	"-mmacosx-version-min=14.0",
 	"-fblocks",
 	"-shared",
+	"-Wl,-install_name,@rpath/automic-vault.node",
 	"-framework",
 	"CoreFoundation",
 	"-undefined",
