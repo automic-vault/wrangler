@@ -7,7 +7,7 @@ replaces:
 build: |
   pnpm install --frozen-lockfile
   node isotope/build.mjs
-  cp isotope/out/cli-*.tgz out.tgz
+  cp "isotope/out/cli-$(node -p 'require("./packages/wrangler/package.json").version').tgz" out.tgz
 
 justification:
   title:
