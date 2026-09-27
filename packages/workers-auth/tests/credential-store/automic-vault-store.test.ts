@@ -11,7 +11,19 @@ const { request, isSea } = vi.hoisted(() => ({
 	isSea: vi.fn(),
 }));
 const getBuiltinModule = process.getBuiltinModule;
-vi.mock("node:module", () => ({ createRequire: () => () => ({ request }) }));
+vi.mock("node:module", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("node:module")>();
+	return {
+		...actual,
+		createRequire: (filename: string | URL) => {
+			const nativeRequire = actual.createRequire(filename);
+			return (specifier: string) =>
+				specifier.endsWith("/Resources/automic-vault.node")
+					? { request }
+					: nativeRequire(specifier);
+		},
+	};
+});
 let directory: string;
 beforeEach(() => {
 	directory = mkdtempSync(path.join(os.tmpdir(), "wrangler-vault-"));
