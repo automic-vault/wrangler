@@ -4595,6 +4595,9 @@ importers:
 
   packages/wrangler:
     dependencies:
+      '@babel/parser':
+        specifier: 7.29.0
+        version: 7.29.0
       '@cloudflare/kv-asset-handler':
         specifier: workspace:*
         version: link:../kv-asset-handler
