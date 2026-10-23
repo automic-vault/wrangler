@@ -61,10 +61,10 @@ static napi_value request(napi_env env, napi_callback_info info) {
   xpc_object_t message = xpc_dictionary_create_empty();
   xpc_dictionary_set_string(message, "op", operation.c_str());
   xpc_dictionary_set_string(message, "key", key.c_str());
+  xpc_dictionary_set_string(message, "cwd", cwd);
   if (operation == "wrangler-save") xpc_dictionary_set_string(message, "value", value.c_str());
   if (operation == "keys") {
     xpc_dictionary_set_string(message, "target", target.c_str());
-    xpc_dictionary_set_string(message, "cwd", cwd);
     xpc_dictionary_set_string(message, "tool", "wrangler");
     xpc_dictionary_set_string(message, "title", "Wrangler credential requested");
     xpc_dictionary_set_string(message, "detail", "Wrangler needs its OAuth credential for this operation.");
