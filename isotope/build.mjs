@@ -21,6 +21,7 @@ if (process.versions.node !== "26.8.1")
 function run(command, args) {
 	execFileSync(command, args, { cwd: root, stdio: "inherit" });
 }
+run(process.execPath, ["isotope/automic-vault.test.mjs"]);
 rmSync(bundle, { recursive: true, force: true });
 mkdirSync(path.join(contents, "MacOS"), { recursive: true });
 mkdirSync(resources, { recursive: true });
