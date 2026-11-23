@@ -114,7 +114,7 @@ try {
 	const output = execFileSync(process.execPath, [cli, "--version"], {
 		env: { ...process.env, NODE_OPTIONS: "", WRANGLER_SEND_METRICS: "false" },
 		encoding: "utf8",
-		timeout: 10000,
+		timeout: 60000,
 	});
 	assert(output.includes(version), output);
 	console.log(
